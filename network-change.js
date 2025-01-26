@@ -1,9 +1,10 @@
-const IP_LOOKUP_URL = "http://ip.im";
+// Surge Script: Detect ISP and Switch Proxy Group Dynamically
+const IP_LOOKUP_URL = "https://ip.im"; // ISP 查询地址
 const PROXY_GROUPS = {
-  "中国电信": "ProxyGroup1",
-  "中国移动": "ProxyGroup2",
-  "中国联通": "ProxyGroup3",
-  "默认": "DefaultProxyGroup"
+  "中国电信": "US-Group",
+  "中国移动": "SG-Group",
+  "中国联通": "KR-Group",
+  "默认": "SG-Group"
 };
 
 // 定义主函数
@@ -11,25 +12,24 @@ const PROXY_GROUPS = {
   console.log("[Surge] Listening for network changes...");
 
   try {
-    const options = { 
-      url: IP_LOOKUP_URL,
-      timeout: 5000 
-    };
-    const response = await $httpClient.get(options);
-    
+    // 请求 ISP 信息
+    const response = await $httpClient.get(IP_LOOKUP_URL);
     if (!response.status || response.status !== 200) {
       throw new Error(`Failed to fetch ISP info: HTTP ${response.status}`);
     }
 
-    const ispMatch = response.body.match(/<td> Isp <\/td>\s*<td><code>(.*?)<\/code><\/td>/);
+    // 解析 ISP 信息
+    const ispMatch = response.data.match(/<td> Isp <\/td>\s*<td><code>(.*?)<\/code><\/td>/);
     const isp = ispMatch ? ispMatch[1] : "未知";
 
     console.log(`[Surge] Detected ISP: ${isp}`);
 
+    // 根据 ISP 切换代理组
     const targetGroup = PROXY_GROUPS[isp] || PROXY_GROUPS["默认"];
     $surge.setSelectGroup(targetGroup);
     console.log(`[Surge] Switched to proxy group: ${targetGroup}`);
 
+    // 返回结果
     return {
       isp,
       targetGroup,
@@ -40,17 +40,7 @@ const PROXY_GROUPS = {
       error: error.message,
     };
   }
-})().then(result => {
-  $done(result);
-});
+})();
 
-// 网络变化事件监听，加上防抖动处理
-let debounceTimer;
-$network.on("NETWORK_CHANGED", function() {
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(() => {
-    detectAndSwitchProxy().then(result => {
-      $done(result);
-    });
-  }, 500); // 500毫秒防抖动
-});
+// 网络变化事件监听
+$network.on("NETWORK_CHANGED", detectAndSwitchProxy);
