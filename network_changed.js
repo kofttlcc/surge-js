@@ -13,14 +13,14 @@ const timeout = 5000; // 超时时间
       }
 
       if (response && response.status === 200) {
-        try {
-          console.log(`[Surge] Raw response: \n${data}`);
-          // 使用正则表达式提取 Isp 字段值
-          const ispMatch = data.match(/Isp:(.+)/);
-          const isp = ispMatch ? ispMatch[1].trim() : "unknown"; // 获取 Isp 值并去除多余空格
-          console.log(`[Surge] Extracted ISP: ${isp}`);
+        console.log(`[Surge] Raw response: \n${data}`);
 
-          // 根据 ISP 动态切换策略组
+        // 使用正则表达式提取 Isp 字段
+        const ispMatch = data.match(/Isp:(.+)/i); // 匹配不区分大小写
+        const isp = ispMatch ? ispMatch[1].trim() : "unknown"; // 获取值并去除空格
+        console.log(`[Surge] Extracted ISP: ${isp}`);
+
+        // 根据 ISP 动态切换策略组
           if (isp.includes("中国移动")) {
             $surge.setSelectGroupPolicy("DynamicGroup", "SG优选");
             console.log("[Surge] Switched to ProxyGroup1 (中国移动 detected)");
@@ -30,11 +30,8 @@ const timeout = 5000; // 超时时间
           } else if (isp.includes("中国电信")) {
             $surge.setSelectGroupPolicy("DynamicGroup", "US-A1");
             console.log("[Surge] Switched to ProxyGroup3 (中国电信 detected)");
-          } else {
-            console.log(`[Surge] Unknown ISP: ${isp}, no change applied`);
-          }
-        } catch (parseError) {
-          console.log(`[Surge] Error parsing response: ${parseError.message}`);
+        } else {
+          console.log(`[Surge] Unknown ISP: ${isp}, no change applied`);
         }
       } else {
         console.log(`[Surge] Invalid response: ${response ? response.status : "no response"}`);
