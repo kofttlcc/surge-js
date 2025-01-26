@@ -13,11 +13,11 @@ const timeout = 5000; // 超时时间
       }
 
       if (response && response.status === 200) {
-        console.log(`[Surge] Raw response: \n${data}`);
+        console.log(`[Surge] Raw response:\n${data}`);
 
-        // 使用正则表达式提取 Isp 字段
-        const ispMatch = data.match(/Isp:(.+)/i); // 匹配不区分大小写
-        const isp = ispMatch ? ispMatch[1].trim() : "unknown"; // 获取值并去除空格
+        // 使用正则提取 HTML 中的 ISP 信息
+        const ispMatch = data.match(/<td>\s*Isp\s*<\/td>\s*<td><code>([^<]+)<\/code><\/td>/i);
+        const isp = ispMatch ? ispMatch[1].trim() : "unknown"; // 获取 ISP 值并去除空格
         console.log(`[Surge] Extracted ISP: ${isp}`);
 
         // 根据 ISP 动态切换策略组
