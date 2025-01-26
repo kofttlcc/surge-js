@@ -10,12 +10,12 @@ const timeout = 5000; // 超时时间
       $persistentStore.write(isp, "current_isp"); // 保存当前 ISP 到本地存储
 
       // 根据 ISP 动态切换策略组
-      if (isp.toLowerCase() === "t-mobile") {
-        $surge.setSelectGroupPolicy("DynamicGroup", "ProxyGroup1"); // 切换到策略组1
-        console.log("[Surge] Switched to ProxyGroup1 (T-Mobile detected)");
-      } else if (isp.toLowerCase() === "att") {
-        $surge.setSelectGroupPolicy("DynamicGroup", "ProxyGroup2"); // 切换到策略组2
-        console.log("[Surge] Switched to ProxyGroup2 (AT&T detected)");
+      if (isp.toLowerCase() === "中国电信") {
+        $surge.setSelectGroupPolicy("DynamicGroup", "US-A1"); // 切换到策略组1
+        console.log("[Surge] Switched to US-A1 (中国电信 detected)");
+      } else if (isp.toLowerCase() === "中国移动") {
+        $surge.setSelectGroupPolicy("DynamicGroup", "SG优选"); // 切换到策略组2
+        console.log("[Surge] Switched to SG优选 (中国移动 detected)");
       } else {
         console.log(`[Surge] Unknown ISP: ${isp}, no change applied`);
       }
