@@ -1,5 +1,7 @@
 const url = "http://ip.im/info"; // 查询 ISP 信息的接口
 const timeout = 5000; // 超时时间
+console.log("Extracted ISP:", isp);
+console.log("Switched to ProxyGroup:", proxyGroup);
 
 (async () => {
   try {
