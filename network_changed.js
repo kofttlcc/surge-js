@@ -14,30 +14,27 @@ const timeout = 5000; // 超时时间
 
       if (response && response.status === 200) {
         try {
-          // 处理非标准 JSON 数据，转换为合法 JSON 格式
-          const sanitizedData = data
-            .replace(/(\w+):/g, '"$1":') // 给 key 添加双引号
-            .replace(/:([a-zA-Z0-9]+)/g, ':"$1"'); // 给 value 添加双引号
-
-          console.log(`[Surge] Sanitized response: ${sanitizedData}`);
-
-          // 解析为 JSON 对象
-          const ispInfo = JSON.parse(sanitizedData);
-          const isp = ispInfo.isp || "unknown"; // 获取 ISP 信息
-          console.log(`[Surge] Fetched ISP: ${isp}`);
+          console.log(`[Surge] Raw response: \n${data}`);
+          // 使用正则表达式提取 Isp 字段值
+          const ispMatch = data.match(/Isp:(.+)/);
+          const isp = ispMatch ? ispMatch[1].trim() : "unknown"; // 获取 Isp 值并去除多余空格
+          console.log(`[Surge] Extracted ISP: ${isp}`);
 
           // 根据 ISP 动态切换策略组
-          if (isp.toLowerCase() === "中国电信") {
-            $surge.setSelectGroupPolicy("DynamicGroup", "US-A1");
-            console.log("[Surge] Switched to ProxyGroup1 (中国电信 detected)");
-          } else if (isp.toLowerCase() === "中国移动") {
+          if (isp.includes("中国移动")) {
             $surge.setSelectGroupPolicy("DynamicGroup", "SG优选");
-            console.log("[Surge] Switched to ProxyGroup2 (中国移动 detected)");
+            console.log("[Surge] Switched to ProxyGroup1 (中国移动 detected)");
+          } else if (isp.includes("中国联通")) {
+            $surge.setSelectGroupPolicy("DynamicGroup", "KR优选");
+            console.log("[Surge] Switched to ProxyGroup2 (中国联通 detected)");
+          } else if (isp.includes("中国电信")) {
+            $surge.setSelectGroupPolicy("DynamicGroup", "US-A1");
+            console.log("[Surge] Switched to ProxyGroup3 (中国电信 detected)");
           } else {
             console.log(`[Surge] Unknown ISP: ${isp}, no change applied`);
           }
-        } catch (jsonError) {
-          console.log(`[Surge] Failed to parse response as JSON: ${jsonError}`);
+        } catch (parseError) {
+          console.log(`[Surge] Error parsing response: ${parseError.message}`);
         }
       } else {
         console.log(`[Surge] Invalid response: ${response ? response.status : "no response"}`);
