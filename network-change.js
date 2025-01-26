@@ -3,7 +3,7 @@ const PROXY_GROUPS = {
   "中国电信": "US-Group",
   "中国移动": "SG-Group",
   "中国联通": "KR-Group",
-  "默认": "US-Group"
+  "默认": "SG-Group"
 };
 
 // 定义主函数
