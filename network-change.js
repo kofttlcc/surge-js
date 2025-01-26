@@ -42,7 +42,7 @@ function detectAndSwitchProxy() {
     // 3. 根据 ISP 切换策略组
     const targetGroup = PROXY_GROUPS[isp] || DEFAULT_GROUP;
     console.log(`[AutoSwitch] 切换到策略组: ${targetGroup}`);
-    const success = $surge.setSelectGroupPolicy("YourPolicyGroupName", targetGroup);
+    const success = $surge.setSelectGroupPolicy("AutoSwitch", targetGroup);
 
     if (success) {
       $notification.post("策略组切换成功", `当前 ISP: ${isp}`, `切换到策略组: ${targetGroup}`);
