@@ -5,7 +5,6 @@ const PROXY_GROUPS = {
   "中国电信": "US-Group",
   "中国移动": "SG-Group",
   "中国联通": "KR-Group",
-  "默认": "SG-Group"
 };
 const DEFAULT_GROUP = "DefaultGroup";
 
@@ -34,10 +33,13 @@ async function detectAndSwitchProxy() {
     const targetGroup = PROXY_GROUPS[isp] || DEFAULT_GROUP;
     console.log(`[AutoSwitch] 切换到策略组: ${targetGroup}`);
     $surge.setSelectGroupPolicy("YourPolicyGroupName", targetGroup);
-
+    $notification.post("策略组切换成功", `当前 ISP: ${isp}`, `切换到策略组: ${targetGroup}`);
   } catch (error) {
     console.error(`[AutoSwitch] 错误: ${error.message}`);
     $notification.post("自动切换失败", "无法检测到 ISP 或策略组切换失败", error.message);
+  } finally {
+    // 确保脚本正常结束
+    $done();
   }
 }
 
