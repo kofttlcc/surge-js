@@ -3,12 +3,12 @@
 // 配置 ISP 对应的策略组
 const PROXY_GROUPS = {
   "中国电信": "US-Group",
-  "中国移动": "SG-Group",
+  "中国移动": "CMCC-Group",
   "中国联通": "KR-Group",
 };
 
 // 默认策略组（当无法匹配 ISP 时使用）
-const DEFAULT_GROUP = "SG-Group";
+const DEFAULT_GROUP = "US-Group";
 
 // 核心函数：检测 ISP 并切换策略组
 function detectAndSwitchProxy() {
