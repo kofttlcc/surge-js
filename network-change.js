@@ -2,9 +2,9 @@
 
 // 配置 ISP 对应的策略组
 const PROXY_GROUPS = {
-  "中国电信": "US-Group",
-  "中国移动": "CMCC-Group",
-  "中国联通": "KR-Group",
+  "中国电信": "US",
+  "中国移动": "KR",
+  "中国联通": "KR",
 };
 
 // 默认策略组（当无法匹配 ISP 时使用）
